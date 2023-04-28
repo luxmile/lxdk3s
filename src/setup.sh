@@ -158,12 +158,12 @@ echo "SETUP: load balancer..."
 cat /tmp/haproxy.cfg.append >> /etc/haproxy/haproxy.cfg
 /etc/init.d/haproxy start
 EOF
-  lb_ip=`lxc list | grep sLB | grep CONTAINER | grep -v zBase | awk '{print $6}'`
+  LB_ip=`lxc list | grep sLB | grep CONTAINER | grep -v zBase | awk '{print $6}'`
   k3sM1_ip=`lxc list | grep sM1 | grep CONTAINER | grep -v zBase | awk '{print $6}'`
   k3sM2_ip=`lxc list | grep sM2 | grep CONTAINER | grep -v zBase | awk '{print $6}'`
   cat > $T/haproxy.cfg.append << EOF
 listen kubernetes-apiserver-https
-  bind $lb_ip:6443
+  bind $LB_ip:6443
   mode tcp
   option log-health-checks
   timeout client 3h
@@ -200,7 +200,7 @@ EOF
   TOKEN=$(lxc exec $_cn -- sh -c "cat /var/lib/rancher/k3s/server/node-token")
   cat > $F << EOF
 export K3S_DATASTORE_ENDPOINT='mysql://k3s:k3s123@tcp($DB_ip:3306)/k3s'
-curl -sfL https://get.k3s.io | sh -s - server -s https://${LB_ip}:6443 -t ${TOKEN} --disable servicelb --node-taint CriticalAddonsOnly=true:NoExecute --tls-san $LB_ip
+curl -sfL https://get.k3s.io | sh -s - server -s https://${LB_ip}:6443 -t ${TOKENt} --disable servicelb --node-taint CriticalAddonsOnly=true:NoExecute --tls-san $LB_ip
 /usr/bin/rm /tmp/$S
 EOF
   cn=k3sM2
